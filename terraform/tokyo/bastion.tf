@@ -2,7 +2,8 @@ resource "aws_instance" "bastion" {
     
     ami = "ami-0aec5ae807cea9ce0"
     instance_type = "t3.micro"
-    associate_public_ip_address = false  # Elastic IP 사용 시 false로 설정
+    associate_public_ip_address = true  # Elastic IP 사용 시 false로 설정
+    private_ip                  = "10.0.1.11"  # 고정 Private IP (public subnet)
     key_name = aws_key_pair.bastion_key.key_name
     vpc_security_group_ids = [aws_security_group.hy_bastion_sg.id]
     subnet_id = aws_subnet.hy_subnet.id
@@ -16,6 +17,17 @@ resource "aws_instance" "bastion" {
     tags = {
         name = "hy_bastion"
     }
+
+    lifecycle {
+    prevent_destroy = true  # 실수 삭제 방지
+    ignore_changes = [
+      user_data,
+      instance_type,
+      subnet_id,
+      vpc_security_group_ids,
+      key_name
+    ]
+  }
 }
 
 # Elastic IP 생성 (고정 Public IP)
@@ -34,6 +46,5 @@ resource "aws_eip_association" "hy_bastion_eip_assoc" {
 }
 
 resource "aws_key_pair" "bastion_key" {
-    key_name = "my_aws_key"
     public_key = file(pathexpand("~/.ssh/hykey.pub"))
 }
