@@ -4,15 +4,15 @@ resource "aws_security_group" "hy_bastion_sg" {
     vpc_id = aws_vpc.hy_vpc.id
 
     ingress {
-        from_port = 22
-        to_port = 22
+        from_port = var.ssh-port
+        to_port = var.ssh-port
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
 
     ingress {
-        from_port = 8080
-        to_port = 8080
+        from_port = var.bastion-http-test-port
+        to_port = var.bastion-http-test-port
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }

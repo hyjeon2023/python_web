@@ -6,8 +6,8 @@ resource "aws_security_group" "hy_frontend_sg" {
     # HTTP from anywhere
     ingress {
         description = "HTTP"
-        from_port   = 80
-        to_port     = 80
+        from_port   = var.http-port
+        to_port     = var.http-port
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
